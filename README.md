@@ -22,7 +22,7 @@ const-string v0, "libname"
 invoke-static {v0}, Ljava/lang/System;->loadLibrary(Ljava/lang/String;)V
 ```
 
-make sure you replace lib name with whatever you put the project name as in CMakeLists.txt
+make sure you replace "template" with whatever you put the project name as in CMakeLists.txt
 
 it should look something like this
 
