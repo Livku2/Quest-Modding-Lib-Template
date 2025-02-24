@@ -42,7 +42,9 @@ namespace {
 
     char16_t *(*il2cpp_string_chars)(void *str);
 
-    void* (*il2cpp_string_new)(const char* str);
+    Il2CppString *(*il2cpp_string_new)(const char *);
+
+    Il2CppString *(*il2cpp_string_new_utf16)(const wchar_t *, size_t len);
 
     char *(*il2cpp_type_get_name)(void *type);
 
@@ -78,6 +80,60 @@ void *getExportFunction(void *handle, const char *name)
 
     LOGI("%s: %p %s", __FUNCTION__, handle, name);
     return nullptr;
+}
+// ========================================================================================================================================== //
+typedef unsigned short UTF16;
+typedef wchar_t UTF32;
+typedef char UTF8;
+
+int is_surrogate(UTF16 uc) {
+    return (uc - 0xd800u) < 2048u;
+}
+
+int is_high_surrogate(UTF16 uc) {
+    return (uc & 0xfffffc00) == 0xd800;
+}
+
+int is_low_surrogate(UTF16 uc) {
+    return (uc & 0xfffffc00) == 0xdc00;
+}
+
+UTF32 surrogate_to_utf32(UTF16 high, UTF16 low) {
+    return (high << 10) + low - 0x35fdc00;
+}
+
+const char* utf16_to_utf8(const UTF16* source, size_t len) {
+    std::u16string s(source, source + len);
+    std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> convert;
+    return convert.to_bytes(s).c_str();
+}
+
+const wchar_t* utf16_to_utf32(const UTF16* source, size_t len) {
+    UTF32* output = new UTF32[len + 1];
+
+    for (int i = 0; i < len; i++) {
+        const UTF16 uc = source[i];
+        if (!is_surrogate(uc)) {
+            output[i] = uc;
+        }
+        else {
+            if (is_high_surrogate(uc) && is_low_surrogate(source[i]))
+                output[i] = surrogate_to_utf32(uc, source[i]);
+            else
+                output[i] = L'?';
+        }
+    }
+
+    output[len] = L'\0';
+    return output;
+}
+// ========================================================================================================================================== //
+const char* Il2CppString::CString() {
+    return utf16_to_utf8(&this->start_char, this->length);
+}
+// ========================================================================================================================================== //
+const wchar_t* Il2CppString::WCString() {
+    return utf16_to_utf32(&this->start_char, this->length);
 }
 
 int init(void *handle)
@@ -116,8 +172,6 @@ int init(void *handle)
 
     il2cpp_string_length = (int32_t (*)(void*)) getExportFunction(handle, "il2cpp_string_length");;
 
-    il2cpp_string_new = (void *(*)(const char *)) getExportFunction(handle, "il2cpp_string_new");;
-
     il2cpp_type_get_name = (char *(*)(void *)) getExportFunction(handle, "il2cpp_type_get_name");;
 
     il2cpp_method_get_param = (void *(*)(void *, uint32_t)) getExportFunction(handle, "il2cpp_method_get_param");;
@@ -140,7 +194,9 @@ int init(void *handle)
 
     il2cpp_class_get_nested_types = (void *(*)(void *, void **)) getExportFunction(handle, "il2cpp_class_get_nested_types");
 
-    il2cpp_object_new = (void *(*)(void *)) getExportFunction(handle, "il2cpp_object_new");
+    il2cpp_string_new = (Il2CppString *(*)(const char *)) getExportFunction(handle, "il2cpp_string_new");
+
+    il2cpp_string_new_utf16 = (Il2CppString *(*)(const wchar_t *, size_t)) getExportFunction(handle, "il2cpp_string_new_utf16");
 
     return 0;
 }
@@ -391,4 +447,14 @@ std::string Il2Cpp::GetString(void *string) {
         return convert.to_bytes(wide_string);
     }
     return "Object NULL!";
+}
+
+Il2CppString *Il2Cpp::CreateString(const char *s)
+{
+    return il2cpp_string_new(s);
+}
+
+Il2CppString *Il2Cpp::CreateString(const wchar_t *s, size_t len)
+{
+    return il2cpp_string_new_utf16(s, len);
 }

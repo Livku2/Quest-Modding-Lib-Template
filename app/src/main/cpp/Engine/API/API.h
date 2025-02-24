@@ -4,6 +4,7 @@
 #include <cstring>
 #include <string>
 #include <vector>
+#include "String.hpp"
 
 using namespace std;
 
@@ -38,7 +39,9 @@ namespace Il2Cpp {
 
     bool IsAssembliesLoaded();
 
-    void *CreateString(const char *str);
+    Il2CppString *CreateString(const char *s);
+
+    Il2CppString *CreateString(const wchar_t *s, size_t len);
 
     template <typename T>
     inline T GetMethod(uintptr_t realOffset) {
