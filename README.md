@@ -1,60 +1,44 @@
-## Android Native Mod Template
+## Quest Modding Template
 
-A minimal native only template for Android modding.
-
-### Background
-
-Recently i wanted to begin doing again some Android modding, but i didn't want to use any of the
-existing frameworks, since it messy and i don't like it.
-</br>So i created this template to make it easier for me to start a new project.
+A template for modding on quest
 
 ### How To Use
 
-1. Clone the repo
-2. Open the project in Android Studio / Visual Studio Code
-3. Change the package name in `app/build.gradle` and library name
-   in `app/src/main/cpp/CMakeLists.txt`
+1. Clone the repo with ``` git clone --recurse-submodules https://github.com/Livku2/Quest-Modding-Template ```
+2. Open the project in Android Studio
+3. Change the library name in `app/src/main/cpp/CMakeLists.txt`
 4. Start coding
 5. Build the project
 6. Copy the generated .so from `app/build/outputs/native/{debug/release}/lib{template}.so`
-7. Load the library in your modded app
-   </br>You can use many various methods to load the library, see [Injecting the library](#injecting-the-library)
 
 ### Injecting the library
-This project is merely a template, so you can use any method you want to load the library.</br>
-Here are some examples: </br></br>
-Note: Modify "**template**" to your library name
+You have to decompile the apk, then go to smali/com/unity3d/player and open UnityPlayerActivity.smali
 
-- #### [Android-Ptrace-Injector - reveny](https://github.com/reveny/Android-Ptrace-Injector)
-```bash
-./Injector -p "com.target.package" -l "template"
-```
+then go to OnCreate and add this
 
-- #### [System.loadLibrary](https://docs.oracle.com/javase/8/docs/api/java/lang/System.html#loadLibrary-java.lang.String)
 ```java
-const-string v0, "template"
+const-string v0, "libname"
 
 invoke-static {v0}, Ljava/lang/System;->loadLibrary(Ljava/lang/String;)V
 ```
 
-- #### [xDL - hexhacking](https://github.com/hexhacking/xDL)
-```c
-void* handle = xdl_open("template", RTLD_NOW);
-```
+make sure you replace lib name with whatever you put the project name as in CMakeLists.txt
 
-- #### Other methods
-As long as you can load the library into the target process, you can use any method you want.
+it should look something like this
 
-### To-Do
-- [x] Polymorphism design pattern
-- [x] Unity API (Vector2, Vector3, Quaternion, etc)
-- [x] Doc: How to use
-- [ ] Doc: What need to be changed
-- [ ] Doc: What each file does
-- [ ] Doc: How to add new functions
-- [ ] Doc: How to add new classes
+![image](https://github.com/user-attachments/assets/cecc47d5-5905-4da5-aad4-1a4b285bb363)
+
+
+### Todo
+
+- [ ] Add Input System
+- [ ] Add Imgui Support
+- [ ] Examples
 
 ### Credit
 
 - [Dobby](https://github.com/jmpews/Dobby) - Hooking library
 - [KittyMemory](https://github.com/MJx0/KittyMemory) - Android, IOS runtime code patching library
+- [Aimar](https://github.com/aimardcr) - Made il2cpp api
+
+- [BryanGIG](https://github.com/BryanGIG/Android-Native-Mod) - Made Original Template
