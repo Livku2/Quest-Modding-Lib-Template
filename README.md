@@ -4,7 +4,7 @@ A template for modding on quest
 
 ### How To Use
 
-1. Clone the repo with ``` git clone --recurse-submodules https://github.com/Livku2/Quest-Modding-Template ```
+1. Clone the repo with ``` git clone --recurse-submodules https://github.com/Livku2/Quest-Modding-Lib-Template ```
 2. Open the project in Android Studio
 3. Change the library name in `app/src/main/cpp/CMakeLists.txt`
 4. Start coding
