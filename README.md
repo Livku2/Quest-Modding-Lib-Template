@@ -1,6 +1,8 @@
 ## Quest Modding Template
 
-A template for modding on quest
+A template for modding on quest but will work on other android devices
+
+Just some stuff added to bryangig's template
 
 ### How To Use
 
