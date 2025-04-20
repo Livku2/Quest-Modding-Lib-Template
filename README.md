@@ -1,3 +1,6 @@
+# OUTDATED
+For new template go to https://github.com/Livku2/Quest-Modding-Template
+
 ## Quest Modding Template
 
 A template for modding on quest but will work on other android devices
